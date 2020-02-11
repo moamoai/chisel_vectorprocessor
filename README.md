@@ -1,4 +1,4 @@
-# chisel_divider
+# chisel_vectorprocessor
 
 
 ### Hardware Specification
