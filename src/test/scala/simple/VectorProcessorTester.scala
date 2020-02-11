@@ -4,24 +4,38 @@ import chisel3._
 import chisel3.iotesters.PeekPokeTester
 import scala.util.control.Breaks._
 
+
 /**
  * Test the VectorProcessor design
  */
 class VectorProcessorTester(dut: VectorProcessor) extends PeekPokeTester(dut) {
-  def f_run_instruction(op: Int, rd: Int, rs1: Int, rs2: Int, mem_addr: Int, vector_length: Int) : Int = {
+  def f_run_instruction(op: UInt, 
+          rd: Int, rs1: Int, rs2: Int, 
+          mem_addr: Int, imm: UInt,
+          vector_length: Int) : Int = {
     poke(dut.io.valid        , 1.U          )
     poke(dut.io.op           , op           )
     poke(dut.io.rd           , rd           )
     poke(dut.io.rs1          , rs1          )
     poke(dut.io.rs2          , rs2          )
     poke(dut.io.mem_addr     , mem_addr     )
+    poke(dut.io.imm          , imm          )
     poke(dut.io.vector_length, vector_length)
     step(1)
     poke(dut.io.valid        , 0.U          )
+    var ready = peek(dut.io.ready)
+    while (ready == 0){
+      step(1)
+      ready = peek(dut.io.ready)
+    }
     return 0;
   }
 
-  f_run_instruction(1, 1, 2, 3, 0x100, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Nop    , 0, 0, 0, 0x000, 0x000.U, 0)
+  f_run_instruction(OBJ_OPCODE.OP_Loadimm, 1, 1, 1, 0x100, 0x123.U, 3)
+  f_run_instruction(OBJ_OPCODE.OP_Store  , 0, 1, 1, 0x100, 0x000.U, 3)
+  f_run_instruction(OBJ_OPCODE.OP_Nop    , 0, 0, 0, 0x000, 0x000.U, 0)
+  step(1)
 
 //  for (i  <- 0 to 1 by 1) {
 //    for (j <- 1 to 1) {

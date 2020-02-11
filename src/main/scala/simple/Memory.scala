@@ -8,6 +8,8 @@ package simple
 
 import chisel3._
 import chisel3.util._
+// import chisel3.util.experimental.loadMemoryFromFile
+// import chisel3.util.experimental.MemoryLoadFileType
 
 /**
  * This is a very basic ALU example.
@@ -31,6 +33,7 @@ class Memory extends Module {
 
   val my_mem = Mem((1<<16), UInt(16.W))
 
+  //loadMemoryFromFile(my_mem, "mem1.txt")
   // The ALU selection
   when(we === 1.U) {
     my_mem(addr) := wdata
