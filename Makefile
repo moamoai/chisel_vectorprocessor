@@ -10,6 +10,8 @@ SBT = sbt
 
 alu:
 	$(SBT) "runMain simple.AluMain"
+vp:
+	$(SBT) "runMain simple.VectorProcessorMain"
 
 mem:
 	$(SBT) "runMain simple.MemoryMain"
@@ -19,6 +21,9 @@ mem:
 alu-test:
 	$(SBT) "test:runMain simple.AluTester --backend-name verilator"
 
+vp-test:
+	$(SBT) "test:runMain simple.VectorProcessorTester --backend-name verilator"
+
 mem-test:
 	$(SBT) "test:runMain simple.MemoryTester --backend-name verilator"
 
@@ -26,7 +31,8 @@ mem-test:
 GTKWAVE = /Applications/gtkwave.app/Contents/Resources/bin/gtkwave
 view:
 	# $(GTKWAVE) ./test_run_dir/simple.AluTester1739761995/Alu.gtkw
-	$(GTKWAVE) ./test_run_dir/simple.MemoryTester1095764230/Memory.gtkw
+	# $(GTKWAVE) ./test_run_dir/simple.MemoryTester1095764230/Memory.gtkw
+	$(GTKWAVE) ./test_run_dir/simple.VectorProcessorTester538384785/vp.gtkw
 
 # clean everything (including IntelliJ project settings)
 
