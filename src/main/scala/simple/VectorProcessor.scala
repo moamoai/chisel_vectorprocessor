@@ -72,8 +72,15 @@ class VectorProcessor extends Module {
     r_count     := 0.U
   }.elsewhen(r_op === OBJ_OPCODE.OP_Nop){
     r_ready_nop := 1.U
+  }.elsewhen(r_op === OBJ_OPCODE.OP_Load){
+    when(r_count < vector_length){
+      mem_addr   := in_mem_addr + r_count
+      r_RegFile(rd + r_count) := mem_rdata
+      r_count := r_count + 1.U
+    }.elsewhen(r_count === vector_length){
+      r_ready_ldi := 1.U
+    }
   }.elsewhen(r_op === OBJ_OPCODE.OP_Loadimm){
-    // for(i <- 0 to 32){
     when(r_count < vector_length){
       r_RegFile(rd + r_count) := imm
       r_count := r_count + 1.U
