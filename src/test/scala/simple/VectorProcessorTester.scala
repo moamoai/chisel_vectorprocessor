@@ -10,7 +10,7 @@ import scala.util.control.Breaks._
  */
 class VectorProcessorTester(dut: VectorProcessor) extends PeekPokeTester(dut) {
   def f_run_instruction(op: UInt, 
-          rd: UInt, rs1: UInt, rs2: Int, 
+          rd: UInt, rs1: UInt, rs2: UInt, 
           mem_addr: Int, imm: UInt,
           vector_length: Int) : Int = {
     poke(dut.io.valid        , 1.U          )
@@ -31,11 +31,13 @@ class VectorProcessorTester(dut: VectorProcessor) extends PeekPokeTester(dut) {
     return 0;
   }
 
-  f_run_instruction(OBJ_OPCODE.OP_Nop    , REG.RD_0, REG.RS1_0, 0, 0x000, 0x000.U, 0)
-  f_run_instruction(OBJ_OPCODE.OP_Loadimm, REG.RD_1, REG.RS1_1, 0, 0x100, 0x123.U, 3)
-  f_run_instruction(OBJ_OPCODE.OP_Store  , REG.RD_0, REG.RS1_1, 0, 0x100, 0x000.U, 3)
-  f_run_instruction(OBJ_OPCODE.OP_Load   , REG.RD_0, REG.RS1_1, 0, 0x100, 0x123.U, 3)
-  f_run_instruction(OBJ_OPCODE.OP_Nop    , REG.RD_0, REG.RS1_0, 0, 0x000, 0x000.U, 0)
+  f_run_instruction(OBJ_OPCODE.OP_Nop    , REG.RD_0, REG.RS1_0, REG.RS2_0, 0x000, 0x000.U, 0)
+  f_run_instruction(OBJ_OPCODE.OP_Loadimm, REG.RD_0, REG.RS1_0, REG.RS2_0, 0x000, 0x100.U, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Loadimm, REG.RD_4, REG.RS1_0, REG.RS2_0, 0x000, 0x200.U, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Add    , REG.RD_8, REG.RS1_0, REG.RS2_4, 0x000, 0x200.U, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Store  , REG.RD_0, REG.RS1_8, REG.RS2_0, 0x100, 0x000.U, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Load   , REG.RD_8, REG.RS1_0, REG.RS2_0, 0x100, 0x000.U, 4)
+  f_run_instruction(OBJ_OPCODE.OP_Nop    , REG.RD_0, REG.RS1_0, REG.RS2_0, 0x000, 0x000.U, 0)
   step(1)
 
 //  for (i  <- 0 to 1 by 1) {

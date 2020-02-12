@@ -61,6 +61,20 @@ class VectorProcessor extends Module {
   i_mem.io.wdata := mem_wdata
   mem_rdata := i_mem.io.rdata
 
+  // Alu
+  val alu_fn     = Wire(UInt(2.W))
+  val alu_a      = Wire(UInt(16.W))
+  val alu_b      = Wire(UInt(16.W))
+  val alu_result = Wire(UInt(16.W))
+  alu_fn := 0.U
+  alu_a  := 0.U
+  alu_b  := 0.U
+  val i_alu = Module(new Alu)
+  i_alu.io.fn := alu_fn
+  i_alu.io.a  := alu_a
+  i_alu.io.b  := alu_b
+  alu_result  := i_alu.io.result
+
   // Controller
   when(valid === 1.U){
     r_op        := op
@@ -93,6 +107,16 @@ class VectorProcessor extends Module {
       mem_addr   := in_mem_addr + r_count
       mem_wdata  := r_RegFile(rs1 + r_count)
       r_count    := r_count + 1.U
+    }.elsewhen(r_count === vector_length){
+      r_ready_sw := 1.U
+    }
+  }.elsewhen(r_op === OBJ_OPCODE.OP_Add){
+    when(r_count < vector_length){
+      alu_fn                  := OBJ_ALU_FUNC.Add
+      alu_a                   := r_RegFile(rs1 + r_count)
+      alu_b                   := r_RegFile(rs2 + r_count)
+      r_count                 := r_count + 1.U
+      r_RegFile(rd + r_count) := alu_result
     }.elsewhen(r_count === vector_length){
       r_ready_sw := 1.U
     }
